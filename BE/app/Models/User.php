@@ -11,6 +11,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\PasskeyUser;
+use App\Models\Posts;
+use App\Models\Reels;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -46,4 +49,14 @@ class User extends Authenticatable implements PasskeyUser
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
+    
+    public function post() : HasOne
+    {
+        return $this->hasOne(Posts::class);
+    }
+    public function reels() : HasOne
+    {
+        return $this->hasOne(Reels::class);
+    }
+
 }
