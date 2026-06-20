@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('reels', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
-            $table->string('caption',100);
-            $table->text('video_url');
+            $table->text('caption');
+            $table->string('video_url');
             $table->timestamps();
         });
     }
