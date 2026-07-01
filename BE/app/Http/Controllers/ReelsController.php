@@ -14,10 +14,7 @@ class ReelsController extends Controller
      */
     public function index()
     {
-        return response()->json([
-            'success' => true,
-            'data' => Reels::all()
-        ], 200);
+        return Reels::all();
     }
 
     /**
@@ -147,5 +144,30 @@ class ReelsController extends Controller
             'message' => 'Failed to delete Reel',
             'success' => false
         ], 500);
+    }
+    public function likes(Reels $reel,Request $req){
+        $user = $req->user();
+
+        $alreadyliked = $user->likedPosts()->where('post_id',$reel->id)->exists();
+
+        if (!$alreadyliked) {
+            $user->likedreels()->attach($reel->id);
+            $reel->likes_count = $reel->likes()->count();
+            $reel->save();
+            $isLiked = true;
+            $message = 'reel Liked succesfuly';
+        }else{
+            $user->likedreels()->detach($reel->id);
+            $reel->likes_count = $reel->likes()->count();
+            $reel->save();
+            $isLiked = false;
+            $message = 'reel Liked removed succesfuly';
+        }
+        return response()->json([
+            'success'=> $isLiked,
+            'message'=> $message,
+            'this_reel_likes'=>$reel->likes()->count()
+        ]);
+
     }
 }

@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use App\Models\Posts;
 use App\Models\Reels;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Fortify\PasskeyAuthenticatable;
@@ -50,13 +51,23 @@ class User extends Authenticatable implements PasskeyUser
             ->implode('');
     }
     
-    public function post() : HasOne
+    public function post() : HasMany
     {
-        return $this->hasOne(Posts::class);
+        return $this->hasMany(Posts::class);
     }
-    public function reels() : HasOne
+    public function reels() : HasMany
     {
-        return $this->hasOne(Reels::class);
+        return $this->hasMany(Reels::class);
     }
-
+    public function likedReels()
+    {
+        return $this->belongsToMany(Reels::class, 'user_reel', 'user_id', 'reel_id')
+                    ->withTimestamps();
+    }
+    public function likedPosts()
+    {
+        return $this->belongsToMany(Posts::class, 'user_post', 'user_id', 'post_id')
+                    ->withTimestamps();
+    }
+    
 }

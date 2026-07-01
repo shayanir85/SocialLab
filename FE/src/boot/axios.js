@@ -1,4 +1,3 @@
-import { boot } from '#q-app/wrappers'
 import axios from 'axios'
 
 const api = axios.create({
@@ -12,7 +11,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('Token')
+    const token = localStorage.getItem('token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -26,14 +25,10 @@ api.interceptors.response.use(
   (error) => {
     if(error.response?.status === 401){
         localStorage.removeItem('token')
-        window.location.href = '/login'
+        window.location.href = '/#/login'
     }
     return Promise.reject(error)
   }
 )
-
-export default boot(({ app }) => {
-  app.config.globalProperties.$api = api
-})
 
 export { api }

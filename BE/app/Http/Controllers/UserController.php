@@ -32,14 +32,13 @@ class UserController extends Controller
     {
         $validated = $request->validate([
         'email' => 'required|email|max:150',
-        'username' => 'required|string|max:50',
-  
-        'password' => 'required|string|max:60'
+        'name' => 'required|string|max:50',
+        'password' => 'required|string|min:8|max:60'
         ]);
 
         $user = User::create([
             'email' => $validated['email'],
-            'name' => $validated['username'],
+            'name' => $validated['name'],
            
             'password' => Hash::make($validated['password']),
         ]); 
@@ -79,7 +78,39 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|max:255|unique:users,email,' . $id,
+            'password' => 'sometimes|string|min:8',
+            'bio' => 'sometimes|string|max:500',
+            'profile_picture' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+        
+
+        if ($request->has('name')) {
+            $user->name = $validated['name'];
+        }
+
+        if ($request->has('email')) {
+            $user->email = $validated['email'];
+        }
+
+        if ($request->has('password')) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        if($user->save()){
+            $user->refresh();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User updated successfully',
+                    'data' => [
+                        'user' => $user,
+                        'updated_fields' => array_keys($validated)
+                    ]
+                ], 200);
+        }
     }
 
     /**

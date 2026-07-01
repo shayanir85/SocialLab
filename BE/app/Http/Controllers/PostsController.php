@@ -25,7 +25,7 @@ class PostsController extends Controller
     {
         $validated = $request->validate([
             'title'=>'required|string|max:225',
-            'content'=>'required|text',
+            'content'=>'required|string',
         ]);
         $user = $request->user();
 
@@ -106,4 +106,31 @@ class PostsController extends Controller
             'success' => false
         ], 500);
     }
+
+    public function likes(posts $post,Request $req){
+        $user = $req->user();
+
+        $alreadyliked = $user->likedPosts()->where('post_id',$post->id)->exists();
+
+        if (!$alreadyliked) {
+            $user->likedPosts()->attach($post->id);
+            $post->likes_count = $post->likes()->count();
+            $post->save();
+            $isLiked = true;
+            $message = 'post Liked succesfuly';
+        }else{
+            $user->likedPosts()->detach($post->id);
+            $post->likes_count = $post->likes()->count();
+            $post->save();
+            $isLiked = false;
+            $message = 'post Liked removed succesfuly';
+        }
+        return response()->json([
+            'success'=> $isLiked,
+            'message'=> $message,
+            'this_post_likes'=>$post->likes()->count()
+        ]);
+
+    }
+
 }

@@ -10,9 +10,13 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::apiResource('/user', UserController::class);
+Route::post('/user', [UserController::class,'store']);
 Route::post('/user/login', [UserController::class,'login']);
+Route::post('/user/{id}/update', [UserController::class,'update']);
 
+Route::post('/post/Like/{post}', [PostsController::class, 'likes'])->middleware('auth:sanctum');
+Route::post('/reel/Like/{reel}', [ReelsController::class, 'likes'])->middleware('auth:sanctum');
 
+    
 Route::apiResource('/posts',PostsController::class)->middleware('auth:sanctum');
 Route::apiResource('/reels',ReelsController::class)->middleware('auth:sanctum');

@@ -4,6 +4,13 @@
       <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
         <q-input
           outlined
+          v-model="Name"
+          label="UserName"
+          style="max-width: 400px; width: 100%"
+          lazy-rules
+        />
+        <q-input
+          outlined
           v-model="email"
           label="Email"
           style="max-width: 400px; width: 100%"
@@ -27,15 +34,26 @@
               val && val.length > 8 ? true : 'Password must be more than 8 characters',
           ]"
         />
+        <q-input
+          outlined
+          type="password"
+          v-model="password_con"
+          label="Confirm Password"
+          style="max-width: 400px; width: 100%"
+          lazy-rules
+          :rules="[
+            (val) =>
+              val && val.length > 8 ? true : 'Password must be more than 8 characters',
+          ]"
+        />
 
         <q-toggle v-model="Remember" label="Remember Me" />
 
         <div>
           <q-btn label="Submit" type="submit" outline color="primary" />
-          <q-btn label="Reset" type="reset" outline color="secondary" class="q-ml-sm" />
         </div>
         <div>
-          <q-btn flat to="/register" color="red">Don't have an account? Register</q-btn>
+          <q-btn flat to="/login" color="red">Already have an account? Login</q-btn>
         </div>
       </q-form>
     </div>
@@ -44,26 +62,39 @@
 <script setup>
 import { api } from "src/boot/axios.js";
 import { ref } from "vue";
+import {useRouter} from 'vue-router';
 
+const router = useRouter()
+const Name = ref();
 const email = ref();
 const password = ref();
+const password_con = ref();
 const Remember = ref();
 
 function onReset() {
+  Name.value = null;
   email.value = null;
   password.value = null;
+  password_con.value = null;
   Remember.value = null;
 }
 
 function onSubmit() {
+  if (password.value !== password_con.value) {
+    console.error("Passwords do not match");
+    return;
+  }
   api
-    .post("/user/login", {
+    .post("/user", {
+      name: Name.value,
       email: email.value,
       password: password.value,
+      password_confirmation: password_con.value,
     })
     .then((response) => {
       console.log(response.data);
-      localStorage.setItem("token", response.data.data.token);
+      onReset();
+      router.push('/login')
     })
     .catch((error) => {
       console.error(error);
