@@ -3,16 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Models\Posts;
+
 use Illuminate\Http\Request;
+
 
 class PostsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Posts::all();
+        $userId = $request->user()->id;
+        
+        $posts = Posts::with(['user', 'likes'])
+            ->latest()
+            ->get()
+            ->map(function ($post) use ($userId) {
+                return [
+                    'id' => $post->id,
+                    'title'=> $post->title,
+                    'content' => $post->content,
+                    'username' => $post->user->name,
+                    // 'avatar' => $post->user->avatar,
+                    'createdAt' => $post->created_at,
+                    // 'tags' => $post->tags ?? [],
+                    'likes_count' => $post->likes->count(),
+                    // 'comments' => $post->comments->count(),
+                    'is_liked' => $post->likes()->where('user_id', $userId)->exists(),
+                    // ✅ This is the key - returns true if user liked the post
+                ];
+            });
+        
+        return response()->json($posts);
     }
 
     /**

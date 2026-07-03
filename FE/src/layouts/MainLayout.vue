@@ -22,7 +22,7 @@
             <q-scroll-area class="fit">
               <q-list>
                 <template v-for="(menuItem, index) in menuList" :key="index">
-                  <q-item clickable :active="menuItem.label === 'Outbox'" v-ripple>
+                  <q-item clickable @click="navigateTo(menuItem.route)" v-ripple>
                     <q-item-section avatar>
                       <q-icon :name="menuItem.icon" />
                     </q-item-section>
@@ -38,7 +38,7 @@
           <q-avatar>
             <img src="../assets/logo-dark.svg" />
           </q-avatar>
-          {{ user?.name || "Loading..." }}
+          {{ user?.name || "Shayan-Iranpour" }}
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
@@ -59,62 +59,89 @@
     </q-footer>
   </q-layout>
 </template>
+
 <script setup>
 import { api } from "src/boot/axios.js";
-import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { ref, onMounted } from "vue";
 
-const drawer = ref(false);
+const drawer = ref(true);
+const router = useRouter();
+const route = useRoute();
+const user = ref(null);
+
 const menuList = ref([
   {
-    label: 'Discover',
-    icon: 'explore',
-    route: '/discover',
-    separator: false
+    label: "Discover",
+    icon: "explore",
+    route: "/discover",
+    separator: true,
   },
   {
-    label: 'Create Post',
-    icon: 'post_add',
-    route: '/createPost',
-    separator: false
+    label: "Create Post",
+    icon: "post_add",
+    route: "/createPost",
+    separator: true,
   },
   {
-    label: 'Create Reel',
-    icon: 'play_circle',
-    route: '/createReel',
-    separator: false
+    label: "Create Reel",
+    icon: "play_circle",
+    route: "/createReel",
+    separator: true,
   },
   {
-    label: 'Messages',
-    icon: 'message',
-    route: '/messages',
-    separator: true  // Separator after this item
+    label: "Messages",
+    icon: "message",
+    route: "/messages",
+    separator: true,
   },
   {
-    label: 'Profile',
-    icon: 'person',
-    route: '/profile',
-    separator: false
+    label: "Profile",
+    icon: "person",
+    route: "/profile",
+    separator: true,
   },
   {
-    label: 'Logout',
-    icon: 'logout',
-    route: '/logout',
-    separator: false
-  }
+    label: "Logout",
+    icon: "logout",
+    route: "/logout",
+    separator: true,
+  },
 ]);
 
-const router = useRouter();
-const user = ref({ name: "" });
-api
-  .get("user")
-  .then((r) => {
-    if (r.data.id && r.data.name) {
-      user.value = r.data;
-      router.push("/discover");
-    }
-  })
-  .catch((e) => {
-    console.log(e);
-  });
+const navigateTo = (routePath) => {
+  if (routePath === '/logout') {
+    localStorage.removeItem('token');
+    router.push('/login');
+    return;
+  }
+  router.push(routePath);
+};
+
+onMounted(() => {
+  const token = localStorage.getItem('token');
+  
+  // If no token and not on login/register, redirect to login
+  if (!token && route.path !== '/login' && route.path !== '/register') {
+    router.push('/login');
+    return;
+  }
+
+  // If token exists and on login/register, let the router guard handle it
+  // No need to manually redirect here
+  if (token) {
+    api
+      .get("user")
+      .then((r) => {
+        if (r.data.id && r.data.name) {
+          user.value = r.data;
+        }
+      })
+      .catch((e) => {
+        console.log('Error fetching user:', e);
+        localStorage.removeItem('token');
+        router.push('/login');
+      });
+  }
+});
 </script>

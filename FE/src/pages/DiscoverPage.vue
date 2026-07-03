@@ -49,11 +49,11 @@
                 class="post-item"
                 @click="openPost(item)"
               >
-                <div style="max-width:500px;" class="text-post-card">
+                <div style="max-width:100%;" class="text-post-card">
                   <!-- Avatar and Username -->
                   <div class="flex items-center q-mb-sm">
                     <q-avatar size="32px" class="q-mr-sm">
-                      <img :src="item.avatar || 'https://ui-avatars.com/api/?name=' + item.username + '&background=random'" />
+                      <img :src="item.avatar || 'https://ui-avatars.com/api/?name=' + item. username + '&background=random'" />
                     </q-avatar>
                     <div>
                       <div class="text-subtitle2 text-weight-bold">{{ item.username }}</div>
@@ -63,6 +63,7 @@
 
                   <!-- Text Content -->
                   <div class="text-content q-mb-sm">
+                    <h6 style="margin: 0; padding: 0;" >{{ item.title }}</h6>
                     <p class="text-body2" style="word-wrap: break-word; white-space: pre-wrap;">
                       {{ item.content }}
                     </p>
@@ -85,11 +86,11 @@
                   <div class="flex items-center q-gutter-md q-mt-sm q-pt-sm border-top">
                     <div class="flex items-center q-gutter-sm" style="cursor: pointer;" @click.stop="toggleLike(item)">
                       <q-icon
-                        :name="item.liked ? 'favorite' : 'favorite_border'"
-                        :color="item.liked ? 'red' : 'grey-7'"
+                        :name="item.is_liked ? 'favorite' : 'favorite_border'"
+                        :color="item.is_liked ? 'red' : 'grey-7'"
                         size="sm"
                       />
-                      <span class="text-caption">{{ formatNumber(item.likes) }}</span>
+                      <span class="text-caption">{{ formatNumber(item.likes_count) }}</span>
                     </div>
                     <div class="flex items-center q-gutter-sm" style="cursor: pointer;" @click.stop="openComments(item)">
                       <q-icon name="chat_bubble_outline" size="sm" color="grey-7" />
@@ -245,14 +246,13 @@ const openReel = (reel) => {
   console.log('Opening reel:', reel)
   // Handle reel click - navigate to reel player or open modal
 }
-
 const toggleLike = (post) => {
   // API call to toggle like
   api.post(`/post/Like/${post.id}`)
-    .then((response) => {
-      console.log(response);
-      post.liked = !post.liked
-      post.likes += post.liked ? 1 : -1
+  .then((response) => {
+      console.log(response);      
+      post.is_liked = !post.is_liked
+      post.likes_count += post.is_liked ? 1 : -1
     })
     .catch((error) => {
       console.error('Failed to toggle like:', error)

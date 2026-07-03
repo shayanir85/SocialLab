@@ -12,6 +12,7 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/user', [UserController::class,'store']);
 Route::post('/user/login', [UserController::class,'login']);
+Route::post('/user/logout', [UserController::class,'login']);
 Route::post('/user/{id}/update', [UserController::class,'update']);
 
 Route::post('/post/Like/{post}', [PostsController::class, 'likes'])->middleware('auth:sanctum');

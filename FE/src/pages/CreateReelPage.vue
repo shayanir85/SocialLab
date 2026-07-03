@@ -4,6 +4,15 @@
       <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
         <q-input
           outlined
+          type="file"
+          v-model="video"
+          label="video"
+          style="max-width: 400px; width: 100%"
+          lazy-rules
+          :rules="[(val) => (val && val.length > 0) || 'Title is required']"
+        />
+        <q-input
+          outlined
           v-model="title"
           label="Title"
           style="max-width: 400px; width: 100%"
@@ -37,22 +46,18 @@ import { api } from 'src/boot/axios.js'
 
 const router = useRouter()
 const title = ref()
+const video = ref((File));
 const content = ref()
 
 function onReset() {
+  video.value = null
   title.value = null
   content.value = null
 }
-// , formDataObj, {
-//     headers: {
-//       'Content-Type': 'multipart/form-data' // Important!
-//     }
+
 function onSubmit() {
   api
-    .post('/posts', {
-      headers:{
-        'Content-Type':'multiport/form-data' 
-      },
+    .post('/reel/create', {
       title: title.value,
       content: content.value,
     })

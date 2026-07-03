@@ -42,10 +42,13 @@
   </q-page>
 </template>
 <script setup>
+// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { api } from "src/boot/axios.js";
 import { ref } from "vue";
 
 const email = ref();
+const router = useRouter();
 const password = ref();
 const Remember = ref();
 
@@ -63,6 +66,9 @@ function onSubmit() {
     })
     .then((response) => {
       console.log(response.data);
+      if(response.data.success) {
+        router.push("/discover");
+      }
       localStorage.setItem("token", response.data.data.token);
     })
     .catch((error) => {

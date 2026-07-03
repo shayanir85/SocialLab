@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "826fa96c78c7bae47e33a0c598993f47",
+    "content-hash": "6ca31b7d1f59d470ab212ee9297a2aec",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -7637,6 +7637,53 @@
         }
     ],
     "packages-dev": [
+        {
+            "name": "ajaydhakal/laravel-host",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ajaydhakal1/laravel-host.git",
+                "reference": "f8d589d33d760efacc3df742f9cf39fd0d287453"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://mirror-composer.runflare.com/repos/ajaydhakal1/laravel-host/zipball/f8d589d33d760efacc3df742f9cf39fd0d287453",
+                "reference": "f8d589d33d760efacc3df742f9cf39fd0d287453",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^11.0|^12.0|^13.0",
+                "php": "^8.2",
+                "symfony/process": "^6.0|^7.0|^8.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^9.0|^10.0",
+                "phpunit/phpunit": "^10.0|^11.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "AjayDhakal\\LaravelHost\\LaravelHostServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AjayDhakal\\LaravelHost\\": "src/"
+                }
+            },
+            "notification-url": "https://mirror-composer.runflare.com/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Serve Laravel apps on the local network using php artisan host.",
+            "support": {
+                "issues": "https://github.com/ajaydhakal1/laravel-host/issues",
+                "source": "https://github.com/ajaydhakal1/laravel-host/tree/v1.0.0"
+            },
+            "time": "2026-06-19T14:01:13+00:00"
+        },
         {
             "name": "fakerphp/faker",
             "version": "v1.24.1",
